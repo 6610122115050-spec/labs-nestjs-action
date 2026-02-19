@@ -10,38 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: peterpee/labs-nestjs-action:latest
 
   deploy:
-    runs-on: self-hosted
-    needs: build-and-push
+  runs-on: self-hosted
+  needs: build-and-push
 
-    steps:
-      - name: Deploy with Docker
-        run: |
-          echo "Starting deployment..."
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-          cd $HOME/app/ieat-frontend
+    - name: Deploy with Docker
+      run: |
+        echo "Starting deployment..."
 
-          sudo docker compose pull
-          sudo docker compose up -d --remove-orphans
-          sudo docker image prune -f
+        cd $GITHUB_WORKSPACE
 
-          echo "Deployment finished!"
+        sudo docker compose pull
+        sudo docker compose up -d --remove-orphans
+        sudo docker image prune -f
+
+        echo "Deployment finished!"
