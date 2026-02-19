@@ -30,18 +30,19 @@ jobs:
           tags: peterpee/labs-nestjs-action:latest
 
   deploy:
-    runs-on: self-hosted
-    needs: build-and-push
+  runs-on: self-hosted
+  needs: build-and-push
 
-    steps:
-      - name: Deploy with Docker
-        run: |
-          echo "Starting deployment..."
+  steps:
+    - name: Deploy with Docker
+      run: |
+        echo "Starting deployment..."
 
-          cd $GITHUB_WORKSPACE
+        cd /home/user/app/ieat-frontend
 
-          docker compose pull
-          docker compose up -d --remove-orphans
-          docker image prune -f
+        docker compose pull
+        docker compose up -d --remove-orphans
+        docker image prune -f
 
-          echo "Deployment finished!"
+        echo "Deployment finished!"
+
