@@ -33,18 +33,15 @@ jobs:
     runs-on: self-hosted
     needs: build-and-push
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+   steps:
+    - name: Deploy with Docker
+      run: |
+        echo "Starting deployment..."
 
-      - name: Deploy with Docker
-        run: |
-          echo "Starting deployment..."
+        cd $GITHUB_WORKSPACE
 
-          cd $GITHUB_WORKSPACE
+        docker compose pull
+        docker compose up -d --remove-orphans
+        docker image prune -f
 
-          sudo docker compose pull
-          sudo docker compose up -d --remove-orphans
-          sudo docker image prune -f
-
-          echo "Deployment finished!"
+        echo "Deployment finished!"
