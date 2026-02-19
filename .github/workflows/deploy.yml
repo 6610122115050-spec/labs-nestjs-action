@@ -10,37 +10,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - uses: docker/login-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - uses: docker/build-push-action@v5
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: peterpee/labs-nestjs-action:latest
 
   deploy:
-  runs-on: self-hosted
-  needs: build-and-push
+    runs-on: self-hosted
+    needs: build-and-push
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Deploy with Docker
-      run: |
-        echo "Starting deployment..."
+      - name: Deploy with Docker
+        run: |
+          echo "Starting deployment..."
 
-        cd $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE
 
-        sudo docker compose pull
-        sudo docker compose up -d --remove-orphans
-        sudo docker image prune -f
+          sudo docker compose pull
+          sudo docker compose up -d --remove-orphans
+          sudo docker image prune -f
 
-        echo "Deployment finished!"
+          echo "Deployment finished!"
